@@ -1,6 +1,14 @@
 import pandas as pd
 import requests
 import os
+import matplotlib.pyplot as plt
+
+import matplotlib.font_manager as font_manager
+
+dir = "C:\\Users\\Student\\Desktop"
+
+for font in font_manager.findSystemFonts(dir):
+    font_manager.fontManager.addfont(font)
 
 eventnum = ''
 eventname = ''
@@ -44,10 +52,21 @@ url = f"https://manbow.nothing.sh/event/event.cgi?action=sp&event={eventnum}"
 html = requests.get(url).content.decode('cp932')
 
 tables = pd.read_html(html)
-sortedtable = tables[0].sort_values(by=['Total'], ascending=False)
+sortedtable = tables[0].sort_values(by=['Total'], ascending=True)
 
-sortedtable.to_excel("hello.xlsx", index=False)
+top20 = sortedtable.tail(20)
 
-filename = f"{eventname}.xlsx"
+plt.rcParams["font.family"] = "Noto Sans JP"
 
-os.rename("hello.xlsx", filename)
+total_x = top20['Total'].values.tolist()
+total_y = top20['Title'].values.tolist()
+
+plt.barh(total_y, total_x)
+plt.title(eventname)
+plt.show()
+
+# sortedtable.to_excel("temp.xlsx", index=False)
+
+# filename = f"{eventname}.xlsx"
+
+# os.rename("hello.xlsx", filename)
